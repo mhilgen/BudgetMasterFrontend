@@ -22,15 +22,94 @@ import {
 
 export default function DashboardAppPage() {
   const theme = useTheme();
+  let year = 2022;
+  let month = 12;
+  const totalyear = 100;
+  const yearspending = 101;
+  const paymentType = 200;
+  const categoryType = 201;
+  const lastFive = 300;
+  const monthType = 400;
+  const monthsumType = 401;
+    async function GET_API(url, type, year) {
+        fetch(url)
+            .then(data => {
+                return data.json();
+            })
+            .then(total => {
+                console.log(total.Response);
+                if(total.Response === 200){
+                    console.log(type)
+                    if(type === totalyear){
+                        totalprice(total.data, year)
+                    }
+                    if(type === yearspending){
+                        yearMonth(total.data, year)
+                    }
+                    if(type === paymentType){
+                        payment(total.data)
+                    }
+                    if(type === categoryType){
+                        category(total.data)
+                    }
+                    if(type === lastFive){
+                        lastFiveLogs(total.data)
+                    }
+                    if(type === monthType){
+                        monthLogs(total.data)
+                    }
+                    if(type === monthsumType){
+                        monthSum(total.data, year)
+                    }
+                }
+            });
+    }
+    async function totalprice(data, year){
+        console.log("totalprice")
+        console.log(data)
+        localStorage.setItem('totalprice', data[`${year}`]);
+    }
+    async function yearMonth(data, year){
+        console.log("yearMonth")
+        console.log(data)
+        localStorage.setItem('yearmonth', data[`${year}`]);
+    }
+    async function payment(data){
+        console.log("payment")
+        console.log(data)
+        localStorage.setItem('payment', data);
+    }
+    async function category(data){
+        console.log("category")
+        console.log(data)
+        localStorage.setItem('category', data);
+    }
+    async function lastFiveLogs(data){
+        console.log("LastFiveLogs")
+        console.log(data)
+        localStorage.setItem('lastFive', data);
+    }
+    async function monthLogs(data){
+        console.log("monthLogs")
+        console.log(data)
+        localStorage.setItem('monthLogs', data);
+    }
+    async function monthSum(data, month){
+        console.log("monthSum")
+        console.log(data)
+        localStorage.setItem('monthsum', data[`${month}`]);
+    }
 
-    // Not functional yet
-    fetch('http://127.0.0.1:5000/total/2022')
-        .then(data => {
-            return data.json();
-        })
-        .then(total => {
-            console.log(total);
-        });
+    // API calls
+    GET_API('http://127.0.0.1:5000/total/'+`${year}`, totalyear, year);
+    GET_API('http://127.0.0.1:5000/totalmonths/'+`${year}`, yearspending, year);
+    GET_API('http://127.0.0.1:5000/payment/'+`${year}`+','+`${month}`, paymentType, year);
+    GET_API('http://127.0.0.1:5000/category/'+`${year}`+','+`${month}`, categoryType, year);
+    GET_API('http://127.0.0.1:5000/last5', lastFive, year);
+    GET_API('http://127.0.0.1:5000/month/'+`${year},${month}`, monthType, year);
+    GET_API('http://127.0.0.1:5000/monthsum/'+`${year},${month}`, monthsumType, month);
+
+
 
   return (
     <>
@@ -48,11 +127,12 @@ export default function DashboardAppPage() {
 
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Yearly Spending of the year" total={13674.36} icon={'game-icons:cash'} />
+
+            <AppWidgetSummary title="Yearly Spending of the year" total={localStorage.getItem('totalprice')} icon={'game-icons:cash'} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Current Month Spending" total={890.3} color="info" icon={'ri:coins-fill'} />
+            <AppWidgetSummary title="Current Month Spending" total={localStorage.getItem('monthsum')} color="info" icon={'ri:coins-fill'} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
@@ -88,6 +168,7 @@ export default function DashboardAppPage() {
                   name: '2022',
                   type: 'area',
                   fill: 'gradient',
+                  // data: localStorage.getItem('yearmonth'),
                   data: [	1144.31, 2858.88, 889.92, 1341.09, 	802.36, 155.29, 205.29, 2970.88, 951.17, 699.93, 764.94, 890.3],
                 },
                 // {
