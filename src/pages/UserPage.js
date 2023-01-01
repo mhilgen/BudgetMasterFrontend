@@ -34,15 +34,36 @@ import USERLIST from '../_mock/user';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'name', label: 'Name', alignRight: false },
-  { id: 'company', label: 'Company', alignRight: false },
-  { id: 'role', label: 'Role', alignRight: false },
-  { id: 'isVerified', label: 'Verified', alignRight: false },
-  { id: 'status', label: 'Status', alignRight: false },
+  { id: 'item', label: 'Item', alignRight: false },
+  { id: 'price', label: 'Price', alignRight: false },
+  { id: 'payment', label: 'Payment Method', alignRight: false },
+  { id: 'category', label: 'Category', alignRight: false },
+  { id: 'date', label: 'Date', alignRight: false },
   { id: '' },
 ];
+let year = 2022;
+let month = 12;
 
 // ----------------------------------------------------------------------
+
+
+async function GET_API(url, year) {
+  fetch(url)
+      .then(data => {
+        return data.json();
+      })
+      .then(total => {
+        // console.log(total.Response);
+        if (total.Response === 200) {
+          console.log("monthLogs")
+          console.log(total.data)
+          localStorage.setItem('monthLogs', JSON.stringify(total.data));
+        }
+      });
+}
+GET_API('http://127.0.0.1:5000/month/'+`${year},${month}`, year);
+// TODO: convert this list into the USERLIST so that we can use it to parse through
+var MonthList = JSON.parse(localStorage.getItem('monthLogs'))
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
