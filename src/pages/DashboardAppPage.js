@@ -31,16 +31,21 @@ import {
 // ----------------------------------------------------------------------
 
 export default function DashboardAppPage() {
-    const [month, setMonth] = React.useState(12);
-    const [year, setYear] = React.useState(2022);
-
-    const handleChange1 = (event: SelectChangeEvent) => {
-        setMonth(event.target.value);
-    };
-    const handleChange2 = (event: SelectChangeEvent) => {
-        setYear(event.target.value);
-    };
   const theme = useTheme();
+  var currDate = new Date();
+  var currDay = currDate.getDate();
+  var currMonth = currDate.getMonth()+1;
+  var currYear = currDate.getFullYear();
+  const [month, setMonth] = React.useState(currMonth);
+  const [year, setYear] = React.useState(currYear);
+  const handleChange1 = (event) => {
+        setMonth(event.target.value);
+        updateAPIs();
+  };
+  const handleChange2 = (event) => {
+        setYear(event.target.value);
+        updateAPIs();
+  };
   // TODO: let the user select the year and month!!!
   // let year = 2022;
   // let month = 12;
@@ -120,24 +125,26 @@ export default function DashboardAppPage() {
     }
     function updateAPIs(){
         console.log("CLICKED THE BUTTON")
+        localStorage.setItem('year', year)
+        localStorage.setItem('month', month)
         console.log(year)
         console.log(month)
 
         // API calls
-        GET_API('http://127.0.0.1:5000/total/'+`${year}`, totalyear, year);
-        GET_API('http://127.0.0.1:5000/totalmonths/'+`${year}`, yearspending, year);
-        GET_API('http://127.0.0.1:5000/payment/'+`${year}`+','+`${month}`, paymentType, year);
-        GET_API('http://127.0.0.1:5000/category/'+`${year}`+','+`${month}`, categoryType, year);
-        GET_API('http://127.0.0.1:5000/last5', lastFive, year);
-        GET_API('http://127.0.0.1:5000/monthsum/'+`${year},${month}`, monthsumType, month);
+        GET_API('http://127.0.0.1:5000/total/'+`${year}`, totalyear, localStorage.getItem('year'));
+        GET_API('http://127.0.0.1:5000/totalmonths/'+`${year}`, yearspending, localStorage.getItem('year'));
+        GET_API('http://127.0.0.1:5000/payment/'+`${year}`+','+`${month}`, paymentType, localStorage.getItem('year'));
+        GET_API('http://127.0.0.1:5000/category/'+`${year}`+','+`${month}`, categoryType, localStorage.getItem('year'));
+        GET_API('http://127.0.0.1:5000/last5', lastFive, localStorage.getItem('year'));
+        GET_API('http://127.0.0.1:5000/monthsum/'+`${year},${month}`, monthsumType, localStorage.getItem('month'));
         yearMonths = JSON.parse(localStorage.getItem('yearmonth'))
         PaymentList = JSON.parse(localStorage.getItem('payment'))
         CategoryList = JSON.parse(localStorage.getItem('category'))
     }
 
-    var yearMonths = JSON.parse(localStorage.getItem('yearmonth'))
-    var PaymentList = JSON.parse(localStorage.getItem('payment'))
-    var CategoryList = JSON.parse(localStorage.getItem('category'))
+    let yearMonths = JSON.parse(localStorage.getItem('yearmonth'))
+    let PaymentList = JSON.parse(localStorage.getItem('payment'))
+    let CategoryList = JSON.parse(localStorage.getItem('category'))
     // console.log("check on list:")
     // console.log(CategoryList)
 
@@ -184,10 +191,17 @@ export default function DashboardAppPage() {
                         <MenuItem value={2}>February</MenuItem>
                         <MenuItem value={3}>March</MenuItem>
                         <MenuItem value={4}>April</MenuItem>
+                        <MenuItem value={5}>May</MenuItem>
+                        <MenuItem value={6}>June</MenuItem>
+                        <MenuItem value={7}>July</MenuItem>
+                        <MenuItem value={8}>August</MenuItem>
+                        <MenuItem value={9}>September</MenuItem>
+                        <MenuItem value={10}>October</MenuItem>
+                        <MenuItem value={11}>November</MenuItem>
                         <MenuItem value={12}>December</MenuItem>
 
                     </Select>
-                    {month}
+                    {/*{month}*/}
                 </FormControl>
                 <br/>
                 <FormControl sx={{ m: 1, minWidth: 100 }}>
@@ -207,7 +221,7 @@ export default function DashboardAppPage() {
                         <MenuItem value={2022}>2022</MenuItem>
                         <MenuItem value={2023}>2023</MenuItem>
                     </Select>
-                    {year}
+                    {/*{year}*/}
                 </FormControl>
                 <Stack spacing={2} direction="row">
                     <Button onClick={() => updateAPIs()} variant="contained">Refresh</Button>
@@ -317,18 +331,18 @@ export default function DashboardAppPage() {
             </Grid>
 
 
-          <Grid item xs={12} md={6} lg={8}>
-            <AppTasks
-              title="Tasks"
-              list={[
-                { id: '1', label: 'Create FireStone Logo' },
-                { id: '2', label: 'Add SCSS and JS files if required' },
-                { id: '3', label: 'Stakeholder Meeting' },
-                { id: '4', label: 'Scoping & Estimations' },
-                { id: '5', label: 'Sprint Showcase' },
-              ]}
-            />
-          </Grid>
+          {/*<Grid item xs={12} md={6} lg={8}>*/}
+          {/*  <AppTasks*/}
+          {/*    title="Tasks"*/}
+          {/*    list={[*/}
+          {/*      { id: '1', label: 'Create FireStone Logo' },*/}
+          {/*      { id: '2', label: 'Add SCSS and JS files if required' },*/}
+          {/*      { id: '3', label: 'Stakeholder Meeting' },*/}
+          {/*      { id: '4', label: 'Scoping & Estimations' },*/}
+          {/*      { id: '5', label: 'Sprint Showcase' },*/}
+          {/*    ]}*/}
+          {/*  />*/}
+          {/*</Grid>*/}
         </Grid>
       </Container>
     </>
