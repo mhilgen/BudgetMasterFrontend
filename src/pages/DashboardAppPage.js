@@ -1,8 +1,18 @@
 import { Helmet } from 'react-helmet-async';
 import { faker } from '@faker-js/faker';
+import * as React from 'react';
+
 // @mui
 import { useTheme } from '@mui/material/styles';
 import { Grid, Container, Typography } from '@mui/material';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormHelperText from '@mui/material/FormHelperText';
+import FormControl from '@mui/material/FormControl';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import Stack from '@mui/material/Stack';
+import Button from '@mui/material/Button';
+import ListSubheader from '@mui/material/ListSubheader';
 // components
 import Iconify from '../components/iconify';
 // sections
@@ -21,16 +31,26 @@ import {
 // ----------------------------------------------------------------------
 
 export default function DashboardAppPage() {
+    const [month, setMonth] = React.useState(12);
+    const [year, setYear] = React.useState(2022);
+
+    const handleChange1 = (event: SelectChangeEvent) => {
+        setMonth(event.target.value);
+    };
+    const handleChange2 = (event: SelectChangeEvent) => {
+        setYear(event.target.value);
+    };
   const theme = useTheme();
   // TODO: let the user select the year and month!!!
-  let year = 2022;
-  let month = 12;
+  // let year = 2022;
+  // let month = 12;
   const totalyear = 100;
   const yearspending = 101;
   const paymentType = 200;
   const categoryType = 201;
   const lastFive = 300;
   const monthsumType = 400;
+
 
     async function GET_API(url, type, year) {
         fetch(url)
@@ -39,6 +59,8 @@ export default function DashboardAppPage() {
             })
             .then(total => {
                 // console.log(total.Response);
+                console.log("API CALL")
+                console.log(type)
                 if (total.Response === 200) {
                     // console.log(type)
                     if (type === totalyear) {
@@ -62,8 +84,6 @@ export default function DashboardAppPage() {
                 }
             });
     }
-    // ListMonths('http://127.0.0.1:5000/totalmonths/'+`${year}`, year);
-
 
     async function totalprice(data, year){
         // console.log("totalprice")
@@ -98,14 +118,23 @@ export default function DashboardAppPage() {
         // console.log(data)
         localStorage.setItem('monthsum', data[`${month}`]);
     }
+    function updateAPIs(){
+        console.log("CLICKED THE BUTTON")
+        console.log(year)
+        console.log(month)
 
-    // API calls
-    GET_API('http://127.0.0.1:5000/total/'+`${year}`, totalyear, year);
-    GET_API('http://127.0.0.1:5000/totalmonths/'+`${year}`, yearspending, year);
-    GET_API('http://127.0.0.1:5000/payment/'+`${year}`+','+`${month}`, paymentType, year);
-    GET_API('http://127.0.0.1:5000/category/'+`${year}`+','+`${month}`, categoryType, year);
-    GET_API('http://127.0.0.1:5000/last5', lastFive, year);
-    GET_API('http://127.0.0.1:5000/monthsum/'+`${year},${month}`, monthsumType, month);
+        // API calls
+        GET_API('http://127.0.0.1:5000/total/'+`${year}`, totalyear, year);
+        GET_API('http://127.0.0.1:5000/totalmonths/'+`${year}`, yearspending, year);
+        GET_API('http://127.0.0.1:5000/payment/'+`${year}`+','+`${month}`, paymentType, year);
+        GET_API('http://127.0.0.1:5000/category/'+`${year}`+','+`${month}`, categoryType, year);
+        GET_API('http://127.0.0.1:5000/last5', lastFive, year);
+        GET_API('http://127.0.0.1:5000/monthsum/'+`${year},${month}`, monthsumType, month);
+        yearMonths = JSON.parse(localStorage.getItem('yearmonth'))
+        PaymentList = JSON.parse(localStorage.getItem('payment'))
+        CategoryList = JSON.parse(localStorage.getItem('category'))
+    }
+
     var yearMonths = JSON.parse(localStorage.getItem('yearmonth'))
     var PaymentList = JSON.parse(localStorage.getItem('payment'))
     var CategoryList = JSON.parse(localStorage.getItem('category'))
@@ -116,18 +145,16 @@ export default function DashboardAppPage() {
     <>
 
       <Helmet>
-        <title> BudgetMaster WebServer </title>
+        <title> BudgetMaster WebServer</title>
       </Helmet>
 
       <Container maxWidth="xl">
         <Typography variant="h4" sx={{ mb: 5 }}>
           Hi, Welcome back
         </Typography>
-
-
-
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={3}>
+
 
             <AppWidgetSummary title="Yearly Spending of the year" total={JSON.parse(localStorage.getItem('totalprice'))} icon={'game-icons:cash'} />
           </Grid>
@@ -139,6 +166,53 @@ export default function DashboardAppPage() {
           <Grid item xs={12} sm={6} md={3}>
             <AppWidgetSummary title="Peak Month" total={1723315} color="warning" icon={'ep:gold-medal'} />
           </Grid>
+            <Grid item xs={12} sm={6} md={3}>
+                <FormControl sx={{ m: 1, minWidth: 100 }}>
+                    <InputLabel id="demo-simple-select-autowidth-label">Months</InputLabel>
+                    <Select
+                        labelId="demo-simple-select-autowidth-label"
+                        id="demo-simple-select-autowidth"
+                        value={month}
+                        onChange={handleChange1}
+                        autoWidth
+                        label="Month"
+                    >
+                        <MenuItem value="">
+                            <em>None</em>
+                        </MenuItem>
+                        <MenuItem value={1}>January</MenuItem>
+                        <MenuItem value={2}>February</MenuItem>
+                        <MenuItem value={3}>March</MenuItem>
+                        <MenuItem value={4}>April</MenuItem>
+                        <MenuItem value={12}>December</MenuItem>
+
+                    </Select>
+                    {month}
+                </FormControl>
+                <br/>
+                <FormControl sx={{ m: 1, minWidth: 100 }}>
+                    <InputLabel id="demo-simple-select-autowidth-label">Years</InputLabel>
+                    <Select
+                        labelId="demo-simple-select-autowidth-label"
+                        id="demo-simple-select-autowidth"
+                        value={year}
+                        onChange={handleChange2}
+                        autoWidth
+                        label="Year"
+                    >
+                        <MenuItem value="">
+                            <em>None</em>
+                        </MenuItem>
+                        <MenuItem value={2021}>2021</MenuItem>
+                        <MenuItem value={2022}>2022</MenuItem>
+                        <MenuItem value={2023}>2023</MenuItem>
+                    </Select>
+                    {year}
+                </FormControl>
+                <Stack spacing={2} direction="row">
+                    <Button onClick={() => updateAPIs()} variant="contained">Refresh</Button>
+                </Stack>
+            </Grid>
 
           <Grid item xs={12} md={6} lg={8}>
             <AppWebsiteVisits
